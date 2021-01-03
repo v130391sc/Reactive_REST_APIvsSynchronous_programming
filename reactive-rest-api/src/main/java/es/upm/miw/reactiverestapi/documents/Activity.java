@@ -29,7 +29,14 @@ public class Activity {
         this.name = name;
         this.duration = duration;
         this.level = level;
+        this.clients = new ArrayList<>();
         this.trainer = trainer;
+    }
+
+    public Activity(String name, Double duration, Integer level) {
+        this.name = name;
+        this.duration = duration;
+        this.level = level;
         this.clients = new ArrayList<>();
     }
 
@@ -68,6 +75,10 @@ public class Activity {
 
     public Trainer getTrainer() {
         return trainer;
+    }
+
+    public void setTrainer(Trainer trainer){
+        this.trainer = trainer;
     }
 
     @Override
