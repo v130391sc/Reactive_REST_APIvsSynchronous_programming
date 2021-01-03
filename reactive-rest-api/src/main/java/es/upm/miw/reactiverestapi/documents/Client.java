@@ -1,10 +1,18 @@
 package es.upm.miw.reactiverestapi.documents;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Document
 public class Client {
 
@@ -21,43 +29,5 @@ public class Client {
         this.name = name;
         this.physicalLevel = physicalLevel;
         this.birthDate = birthDate;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getPhysicalLevel() {
-        return physicalLevel;
-    }
-
-    public void setPhysicalLevel(Integer physicalLevel) {
-        this.physicalLevel = physicalLevel;
-    }
-
-    public LocalDateTime getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDateTime birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", physicalLevel=" + physicalLevel +
-                ", birthDate=" + birthDate +
-                '}';
     }
 }

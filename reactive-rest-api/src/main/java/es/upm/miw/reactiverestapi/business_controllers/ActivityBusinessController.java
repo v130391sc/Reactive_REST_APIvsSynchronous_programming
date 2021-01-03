@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Controller
 public class ActivityBusinessController {
 
@@ -37,13 +39,16 @@ public class ActivityBusinessController {
         Activity activity = new Activity(activityCreationDto.getActivityName(), activityCreationDto.getLength(), activityCreationDto.getMinLevelRequired());
         if (activityCreationDto.getTrainerId() != null) {
             trainer = this.trainerReactRepository.findById(activityCreationDto.getTrainerId())
-                    .switchIfEmpty(Mono.error(new NotFoundException("Trainer id: " + activityCreationDto.getTrainerId()))).doOnNext(activity::setTrainer);
+                    .switchIfEmpty(Mono.error(new NotFoundException("Trainer id: " + activityCreationDto.getTrainerId()))).map(trainer1 -> {
+                        activity.setTrainerId(trainer1.getId());
+                        return trainer1;
+                    });
         }
         if (activityCreationDto.getClientsIds() != null) {
             for(String clientId : activityCreationDto.getClientsIds()){
                 client = this.clientReactRepository.findById(clientId).switchIfEmpty(Mono.error(new NotFoundException("Client id: " + clientId)))
                         .map(client1 -> {
-                    activity.getClients().add(client1);
+                    activity.getClientsIds().add(client1.getId());
                     return client1;
                 });
             }
@@ -61,14 +66,17 @@ public class ActivityBusinessController {
 
     public Flux<ActivityBasicDto> findByClientPhysicalLevelGreaterThan(Integer value) {
         return this.activityReactRepository.findAll()
-                .filter(activity -> this.anyMatchActivityClientPhysicalLevelGreaterThan(activity, value))
+                .flatMap(activity -> this.anyMatchActivityClientPhysicalLevelGreaterThan(activity, value))
                 .map(ActivityBasicDto::new);
     }
 
-    private boolean anyMatchActivityClientPhysicalLevelGreaterThan(Activity activity, Integer value) {
-        return activity.getClients().stream()
-                .map(Client::getPhysicalLevel)
-                .anyMatch(physicalLevel -> physicalLevel > value);
+    private Flux<Activity> anyMatchActivityClientPhysicalLevelGreaterThan(Activity activity, Integer value) {
+        Flux<Activity> activityFlux = Flux.empty();
+        for(String clientId : activity.getClientsIds()){
+            Mono<Activity> clientMono = this.clientReactRepository.findById(clientId).filter(client1 -> client1.getPhysicalLevel() > value).map(client -> activity);
+            activityFlux = activityFlux.mergeWith(clientMono);
+        }
+        return activityFlux;
     }
 
     public Mono<ActivityBasicDto> updateDuration(String id, ActivityUpdateDto activityUpdateDto) {

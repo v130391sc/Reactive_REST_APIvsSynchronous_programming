@@ -1,5 +1,13 @@
 package es.upm.miw.reactiverestapi.documents;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@Builder
 public class Equipment {
 
     private String name;
@@ -9,13 +17,5 @@ public class Equipment {
     public Equipment(String name, Integer amount) {
         this.name = name;
         this.amount = amount;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Integer getAmount() {
-        return amount;
     }
 }

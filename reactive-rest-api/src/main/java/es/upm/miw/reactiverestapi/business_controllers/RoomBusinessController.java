@@ -30,7 +30,10 @@ public class RoomBusinessController {
     public Mono<RoomBasicDto> create(RoomCreationDto roomCreationDto) {
         Room room = new Room(roomCreationDto.getActivitySchedule(), roomCreationDto.getSeating());
         Mono<Activity> activity = this.activityReactRepository.findById(roomCreationDto.getActivityId())
-                .switchIfEmpty(Mono.error(new NotFoundException("Activity id: " + roomCreationDto.getActivityId()))).doOnNext(room::setActivity);
+                .switchIfEmpty(Mono.error(new NotFoundException("Activity id: " + roomCreationDto.getActivityId()))).map(activity1 -> {
+                    room.setActivityId(activity1.getId());
+                    return activity1;
+                });
         return Mono.when(activity).then(this.roomReactRepository.save(room)).map(RoomBasicDto::new);
     }
 

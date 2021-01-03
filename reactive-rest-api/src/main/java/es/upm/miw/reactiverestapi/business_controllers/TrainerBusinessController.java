@@ -34,16 +34,17 @@ public class TrainerBusinessController {
 
     public Mono<Void> patch(List<TrainerPatchDto> trainerPatchDtos) {
         Flux<Trainer> trainerFlux = Flux.empty();
+        Mono<Trainer> trainerMono = Mono.empty();
         for(TrainerPatchDto trainerPatchDto : trainerPatchDtos){
-            Mono<Trainer> trainer = this.trainerReactRepository.findById(trainerPatchDto.getTrainerId())
+            trainerMono = this.trainerReactRepository.findById(trainerPatchDto.getTrainerId())
                     .switchIfEmpty(Mono.error(new NotFoundException("Trainer id: " + trainerPatchDto.getTrainerId())))
                     .map(trainer1 -> {
                         trainer1.setName(trainerPatchDto.getNewName());
                         return trainer1;
                     });
-            trainerFlux = trainerFlux.mergeWith(trainer);
+            trainerFlux = trainerFlux.mergeWith(trainerMono);
         }
-        return Mono.when(trainerFlux).then(this.trainerReactRepository.saveAll(trainerFlux).next()).then();
+        return Mono.when(trainerMono, trainerFlux).then(this.trainerReactRepository.saveAll(trainerFlux).next()).then();
     }
 
     public Mono<TrainerDto> updateName(String id, String name){
