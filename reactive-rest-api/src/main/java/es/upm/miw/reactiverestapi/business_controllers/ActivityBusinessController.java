@@ -15,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @Controller
 public class ActivityBusinessController {
 
@@ -35,7 +33,7 @@ public class ActivityBusinessController {
 
     public Mono<ActivityBasicDto> create(ActivityCreationDto activityCreationDto) {
         Mono<Trainer> trainer = Mono.empty();
-        Mono<Client> client = Mono.empty();
+        Flux<Client> client = Flux.empty();
         Activity activity = new Activity(activityCreationDto.getActivityName(), activityCreationDto.getLength(), activityCreationDto.getMinLevelRequired());
         if (activityCreationDto.getTrainerId() != null) {
             trainer = this.trainerReactRepository.findById(activityCreationDto.getTrainerId())
@@ -45,13 +43,10 @@ public class ActivityBusinessController {
                     });
         }
         if (activityCreationDto.getClientsIds() != null) {
-            for(String clientId : activityCreationDto.getClientsIds()){
-                client = this.clientReactRepository.findById(clientId).switchIfEmpty(Mono.error(new NotFoundException("Client id: " + clientId)))
-                        .map(client1 -> {
-                    activity.getClientsIds().add(client1.getId());
-                    return client1;
-                });
-            }
+            client = Flux.fromStream(activityCreationDto.getClientsIds().stream())
+                    .flatMap(clientId -> this.clientReactRepository.findById(clientId)
+                            .switchIfEmpty(Mono.error(new NotFoundException("Client id: " + clientId))))
+                    .doOnNext(client1 -> activity.getClientsIds().add(client1.getId()));
         }
         return Mono.when(trainer, client).then(this.activityReactRepository.save(activity)).map(ActivityBasicDto::new);
     }
@@ -76,7 +71,7 @@ public class ActivityBusinessController {
             Mono<Activity> clientMono = this.clientReactRepository.findById(clientId).filter(client1 -> client1.getPhysicalLevel() > value).map(client -> activity);
             activityFlux = activityFlux.mergeWith(clientMono);
         }
-        return activityFlux;
+        return activityFlux.distinct();
     }
 
     public Mono<ActivityBasicDto> updateDuration(String id, ActivityUpdateDto activityUpdateDto) {

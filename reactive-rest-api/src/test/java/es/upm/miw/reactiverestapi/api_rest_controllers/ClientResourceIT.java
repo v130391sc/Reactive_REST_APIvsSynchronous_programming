@@ -3,7 +3,6 @@ package es.upm.miw.reactiverestapi.api_rest_controllers;
 import es.upm.miw.reactiverestapi.ApiTestConfig;
 import es.upm.miw.reactiverestapi.dtos.ClientBasicDto;
 import es.upm.miw.reactiverestapi.dtos.ClientCreationDto;
-import es.upm.miw.reactiverestapi.repositories.ClientReactRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ApiTestConfig
 public class ClientResourceIT {

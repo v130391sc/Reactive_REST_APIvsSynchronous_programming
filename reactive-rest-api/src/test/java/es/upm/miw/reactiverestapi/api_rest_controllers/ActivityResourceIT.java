@@ -211,11 +211,13 @@ public class ActivityResourceIT {
 
     @Test
     void testSearch() {
-        this.webTestClient
+        ActivityBasicDto zumba = this.webTestClient
                 .post().uri(ActivityResource.ACTIVITIES)
                 .body(BodyInserters.fromObject(createActivity("Zumba", true, true)))
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().isOk()
+                .expectBody(ActivityBasicDto.class)
+                .returnResult().getResponseBody();
         List<ActivityBasicDto> activities = this.webTestClient
                 .get().uri(uriBuilder ->
                         uriBuilder.path(ActivityResource.ACTIVITIES + ActivityResource.SEARCH)
