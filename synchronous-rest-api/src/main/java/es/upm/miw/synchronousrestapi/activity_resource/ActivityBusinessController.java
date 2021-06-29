@@ -66,7 +66,7 @@ public class ActivityBusinessController {
 
     public void updateDuration(String id, ActivityUpdateDto activityUpdateDto) {
         Activity activity = this.activityDao.findById(id).orElseThrow(() -> new NotFoundException("Activity id: " + id));
-        activity.setDuration(activityUpdateDto.getLenght());
+        activity.setDuration(activityUpdateDto.getLength());
         this.activityDao.save(activity);
     }
 }

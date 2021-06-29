@@ -8,7 +8,7 @@ public class ActivityUpdateDto {
 
     private String id;
 
-    private Double lenght;
+    private Double length;
 
     public ActivityUpdateDto() {
         //Empty for the Framework
@@ -22,18 +22,18 @@ public class ActivityUpdateDto {
         this.id = id;
     }
 
-    public Double getLenght() {
-        return lenght;
+    public Double getLength() {
+        return length;
     }
 
-    public void setLenght(Double lenght) {
-        this.lenght = lenght;
+    public void setLength(Double length) {
+        this.length = length;
     }
 
     public void validateDuration() {
-        if (this.lenght == null) {
+        if (this.length == null) {
             throw new BadRequestException("Incomplete, lost duration");
-        } else if (this.lenght.compareTo(MIN_DURATION) < 0) {
+        } else if (this.length.compareTo(MIN_DURATION) < 0) {
             throw new BadRequestException("Duration must be equal or more than 0");
         }
     }
@@ -42,7 +42,7 @@ public class ActivityUpdateDto {
     public String toString() {
         return "ActivityUpdateDto{" +
                 "id='" + id + '\'' +
-                ", lenght=" + lenght +
+                ", lenght=" + length +
                 '}';
     }
 }

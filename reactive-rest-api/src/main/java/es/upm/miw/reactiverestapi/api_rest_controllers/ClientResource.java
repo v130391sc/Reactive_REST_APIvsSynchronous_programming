@@ -3,6 +3,9 @@ package es.upm.miw.reactiverestapi.api_rest_controllers;
 import es.upm.miw.reactiverestapi.business_controllers.ClientBusinessController;
 import es.upm.miw.reactiverestapi.dtos.ClientBasicDto;
 import es.upm.miw.reactiverestapi.dtos.ClientCreationDto;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -25,7 +28,7 @@ public class ClientResource {
     @PostMapping
     public Mono<ClientBasicDto> create(@RequestBody ClientCreationDto clientCreationDto) {
         clientCreationDto.validate();
-        return this.clientBusinessController.create(clientCreationDto);
+        return this.clientBusinessController.create(clientCreationDto).doOnEach(log -> LogManager.getLogger(this.getClass()).debug(log));
     }
 
     @DeleteMapping(value = ID_ID)

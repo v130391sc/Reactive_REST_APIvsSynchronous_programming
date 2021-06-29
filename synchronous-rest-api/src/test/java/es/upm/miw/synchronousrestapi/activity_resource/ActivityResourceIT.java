@@ -147,7 +147,7 @@ public class ActivityResourceIT {
     void testUpdate() {
         ActivityUpdateDto activityUpdateDto = new ActivityUpdateDto();
         String id = getIdFromExistingActivity();
-        activityUpdateDto.setLenght(2.5);
+        activityUpdateDto.setLength(2.5);
         this.webTestClient
                 .put().uri(ActivityResource.ACTIVITIES + ActivityResource.ID_ID + ActivityResource.DURATION, id)
                 .body(BodyInserters.fromObject(activityUpdateDto))
@@ -185,7 +185,7 @@ public class ActivityResourceIT {
     @Test
     void testUpdateActivityNotFound() {
         ActivityUpdateDto activityUpdateDto = new ActivityUpdateDto();
-        activityUpdateDto.setLenght(2.5);
+        activityUpdateDto.setLength(2.5);
         this.webTestClient
                 .put().uri(ActivityResource.ACTIVITIES + ActivityResource.ID_ID + ActivityResource.DURATION, "ActivityIdNoExistente")
                 .body(BodyInserters.fromObject(activityUpdateDto))
@@ -206,7 +206,7 @@ public class ActivityResourceIT {
     @Test
     void testUpdateBadDurationException() {
         ActivityUpdateDto activityUpdateDto = new ActivityUpdateDto();
-        activityUpdateDto.setLenght(-2.5);
+        activityUpdateDto.setLength(-2.5);
         this.webTestClient
                 .put().uri(ActivityResource.ACTIVITIES + ActivityResource.ID_ID + ActivityResource.DURATION, getIdFromExistingActivity())
                 .body(BodyInserters.fromObject(activityUpdateDto))
